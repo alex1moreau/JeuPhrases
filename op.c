@@ -9,6 +9,8 @@ int random_line(int nblines) {
     return r;
 }
 
+int getline(char **lineptr, size_t *n, FILE *stream);
+
 int nblines() {
     FILE * fp;
     char * line = NULL;

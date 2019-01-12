@@ -6,37 +6,30 @@
 #include <ctype.h>
 #include <string.h>
 
-void EscapePrint(int ch) {
-  // Delete or adjust these 2 arrays per code's goals
-  // All simple-escape-sequence C11 6.4.4.4
-  static const char *escapev = "\a\b\t\n\v\f\r\"\'\?\\";
-  static const char *escapec = "abtnvfr\"\'\?\\";
-  char *p = strchr(escapev, ch);
-  if (p && *p) {
-    printf("\\%c", escapec[p - escapev]);
-  } else if (isprint(ch)) {
-    fputc(ch, stdout);
-  } else {
-    // Use octal as hex is problematic reading back
-    printf("\\%03o", ch);
-  }
-}
-
-void EscapePrints(const char *data, int length) {
-  while (length-- > 0) {
-    EscapePrint((unsigned char) *data++);
-  }
-}
-
-int main(int argc, char const *argv[]) {
-    for (int i = 0; i < argc; i++)
-        printf("%s   ", argv[i]);
-    printf("\n");
-
+int main() {
+    int life = 3;
     char *sentence = load_sentence();
     char *sentence_clean = clean_sentence(sentence); //malloc
+    //printf("%s\n", sentence_clean);
     char *sentence_hide = hide_sentence(sentence_clean); //malloc
-    print_sentence(sentence_hide);
+    print_sentence(sentence_hide, life);
+
+    while (!state(sentence_hide)) {
+        char c = getchar();
+        if (c != '\n') {
+            int try = try_letter(c, sentence_clean, sentence_hide);
+            if (try == 0)
+                life--;
+            system("clear");
+            print_sentence(sentence_hide, life);
+            if (life == 0)
+                break;
+        }
+    }
+    if (life > 0)
+        printf("You won!\n");
+    else
+        printf("Game Over!\nAnswer was : \"%s\"\n", sentence_clean);
 
     free(sentence_clean);
     free(sentence_hide);

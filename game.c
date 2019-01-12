@@ -24,7 +24,7 @@ char *clean_sentence(char *s) { //replace lower case and delete '\n'
 }
 
 char *hide_sentence(char *s) { //hide consonants => replace by '_'
-    char *res = malloc(sizeof(s));
+    char *res = malloc(50*sizeof(char));
     char list[5] = {' ', '-', '!', '.', '\''};
     int len = len_sentence(s), j = 0;
 
@@ -49,7 +49,12 @@ char *hide_sentence(char *s) { //hide consonants => replace by '_'
     return res;
 }
 
-void print_sentence(char *s) { //print sentence
+void print_sentence(char *s, int life) { //print sentence
+    char pendu[4][30] = {   "  Ö\n/[ ]\\\n / \\",
+                            "  Ö\n/[ ]\\",
+                            "  Ö",
+                            "\0"};
+    printf("\n%s\n\n", pendu[life]);
     int len = len_sentence(s);
     for (int i = 0; i < len+6; i++)
         printf("=");
@@ -57,4 +62,27 @@ void print_sentence(char *s) { //print sentence
     for (int i = 0; i < len+6; i++)
         printf("=");
     printf("\n");
+}
+
+int try_letter(char c, char *s, char *h) { //insert letter if possible
+    if (c >= 'a' && c <= 'z')
+        c -= 32;
+    int len = len_sentence(s), bool = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (s[i] == c) {
+            h[i] = c;
+            bool = 1;
+        }
+    }
+    return bool;
+}
+
+int state(char *h) { //return 1 if victory
+    int len = len_sentence(h);
+    for (int i = 0; i < len; i++) {
+        if (h[i] == '_')
+            return 0;
+    }
+    return 1;
 }
